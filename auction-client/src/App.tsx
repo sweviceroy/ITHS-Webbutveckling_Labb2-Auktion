@@ -7,6 +7,7 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import AuctionDetail from './pages/AuctionDetail';
 import CreateAuction from './pages/CreateAuction';
+import ChangePassword from './pages/ChangePassword';
 
 export default function App() {
   return (
@@ -24,6 +25,14 @@ export default function App() {
               element={
                 <ProtectedRoute>
                   <CreateAuction />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/change-password"
+              element={
+                <ProtectedRoute>
+                  <ChangePassword />
                 </ProtectedRoute>
               }
             />

@@ -51,6 +51,20 @@
   background: #c73b54;
 }
 
+.closed-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-top: 0.8rem;
+  color: #888;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+.closed-toggle input {
+  accent-color: #e94560;
+}
+
 .auction-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));

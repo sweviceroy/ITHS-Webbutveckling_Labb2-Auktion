@@ -51,12 +51,15 @@ public class AuctionsController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<List<AuctionListDto>>> GetAll([FromQuery] string? title)
+    public async Task<ActionResult<List<AuctionListDto>>> GetAll([FromQuery] string? title, [FromQuery] bool includeClosed = false)
     {
         var query = _db.Auctions
             .Include(a => a.Creator)
             .Include(a => a.Bids)
-            .Where(a => a.IsActive && a.EndDate > DateTime.UtcNow);
+            .Where(a => a.IsActive);
+
+        if (!includeClosed)
+            query = query.Where(a => a.EndDate > DateTime.UtcNow);
 
         if (!string.IsNullOrWhiteSpace(title))
             query = query.Where(a => a.Title.Contains(title));
@@ -71,6 +74,7 @@ public class AuctionsController : ControllerBase
                 StartingPrice = a.StartingPrice,
                 CurrentHighestBid = a.CurrentHighestBid,
                 EndDate = a.EndDate,
+                IsOpen = a.EndDate > DateTime.UtcNow,
                 BidCount = a.Bids.Count,
                 CreatorUsername = a.Creator.Username
             })

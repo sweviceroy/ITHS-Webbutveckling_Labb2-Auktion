@@ -142,13 +142,24 @@
 }
 
 .login-prompt,
-.owner-notice {
+.owner-notice,
+.closed-result {
   color: #888;
   text-align: center;
-  padding: 1rem;
+  padding: 1.5rem;
   background: #16213e;
   border-radius: 8px;
   margin-bottom: 1.5rem;
+}
+
+.closed-result h2 {
+  color: #f44336;
+  margin: 0 0 0.5rem;
+}
+
+.closed-result .price {
+  color: #e94560;
+  font-weight: 700;
 }
 
 .bid-history {

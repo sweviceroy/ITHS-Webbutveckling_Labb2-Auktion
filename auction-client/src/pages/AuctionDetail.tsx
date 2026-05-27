@@ -111,24 +111,38 @@ export default function AuctionDetailPage() {
         <p className="owner-notice">This is your auction. You cannot bid on it.</p>
       )}
 
-      <div className="bid-history">
-        <h2>Bid History ({auction.bids.length})</h2>
-        {auction.bids.length === 0 ? (
-          <p>No bids yet.</p>
-        ) : (
-          <ul>
-            {auction.bids.map((bid) => (
-              <li key={bid.id} className="bid-item">
-                <span className="bid-amount">{bid.amount} SEK</span>
-                <span className="bid-user">{bid.bidderUsername}</span>
-                <span className="bid-time">
-                  {new Date(bid.bidTime).toLocaleString()}
-                </span>
-              </li>
-            ))}
-          </ul>
-        )}
-      </div>
+      {auction.isOpen ? (
+        <div className="bid-history">
+          <h2>Bid History ({auction.bids.length})</h2>
+          {auction.bids.length === 0 ? (
+            <p>No bids yet.</p>
+          ) : (
+            <ul>
+              {auction.bids.map((bid) => (
+                <li key={bid.id} className="bid-item">
+                  <span className="bid-amount">{bid.amount} SEK</span>
+                  <span className="bid-user">{bid.bidderUsername}</span>
+                  <span className="bid-time">
+                    {new Date(bid.bidTime).toLocaleString()}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      ) : (
+        <div className="closed-result">
+          <h2>Auction Closed</h2>
+          {auction.currentHighestBid ? (
+            <p>
+              <strong>Winner:</strong> {auction.bids[0]?.bidderUsername} with{' '}
+              <span className="price">{auction.currentHighestBid} SEK</span>
+            </p>
+          ) : (
+            <p>No bids were placed on this auction.</p>
+          )}
+        </div>
+      )}
     </div>
   );
 }

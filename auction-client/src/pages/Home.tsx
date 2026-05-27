@@ -10,17 +10,20 @@ export default function Home() {
   const [loading, setLoading] = useState(true);
   const [searchParams, setSearchParams] = useSearchParams();
   const query = searchParams.get('q') || '';
+  const includeClosed = searchParams.get('closed') === 'true';
 
   useEffect(() => {
     const fetchAuctions = async () => {
       setLoading(true);
-      const params = query ? { title: query } : {};
+      const params: Record<string, string> = {};
+      if (query) params.title = query;
+      if (includeClosed) params.includeClosed = 'true';
       const { data } = await api.get<Auction[]>('/auctions', { params });
       setAuctions(data);
       setLoading(false);
     };
     fetchAuctions();
-  }, [query]);
+  }, [query, includeClosed]);
 
   const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -43,6 +46,19 @@ export default function Home() {
           />
           <button type="submit" className="search-btn">Search</button>
         </form>
+        <label className="closed-toggle">
+          <input
+            type="checkbox"
+            checked={includeClosed}
+            onChange={(e) => setSearchParams((prev) => {
+              const next = new URLSearchParams(prev);
+              if (e.target.checked) next.set('closed', 'true');
+              else next.delete('closed');
+              return next;
+            })}
+          />
+          Include closed auctions
+        </label>
       </div>
 
       {loading ? (

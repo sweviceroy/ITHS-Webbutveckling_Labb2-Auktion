@@ -13,6 +13,7 @@ export interface Auction {
   startingPrice: number;
   currentHighestBid?: number;
   endDate: string;
+  isOpen: boolean;
   bidCount: number;
   creatorUsername: string;
 }
