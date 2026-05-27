@@ -1,0 +1,73 @@
+.create-auction-page {
+  display: flex;
+  justify-content: center;
+  padding: 2rem 1rem;
+}
+
+.create-auction-form {
+  background: #16213e;
+  padding: 2rem;
+  border-radius: 8px;
+  width: 100%;
+  max-width: 500px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.create-auction-form h1 {
+  color: #eee;
+  text-align: center;
+  margin: 0 0 0.5rem;
+}
+
+.create-auction-form label {
+  color: #888;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.create-auction-form input,
+.create-auction-form textarea {
+  padding: 0.7rem 1rem;
+  border: 1px solid #333;
+  border-radius: 6px;
+  background: #1a1a2e;
+  color: #eee;
+  font-size: 1rem;
+  font-family: inherit;
+  resize: vertical;
+}
+
+.create-auction-form input:focus,
+.create-auction-form textarea:focus {
+  outline: none;
+  border-color: #e94560;
+}
+
+.create-auction-form button {
+  padding: 0.7rem;
+  background: #e94560;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  margin-top: 0.5rem;
+}
+
+.create-auction-form button:hover {
+  background: #c73b54;
+}
+
+.form-error {
+  background: #3d0000;
+  color: #ff6b6b;
+  padding: 0.6rem;
+  border-radius: 4px;
+  text-align: center;
+  margin: 0;
+  font-size: 0.9rem;
+}
