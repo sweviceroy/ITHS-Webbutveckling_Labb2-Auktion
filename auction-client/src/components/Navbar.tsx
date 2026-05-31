@@ -30,6 +30,9 @@ export default function Navbar() {
             <>
               <Link to="/auctions/create" className="nav-link" onClick={() => setMenuOpen(false)}>Sell</Link>
               <Link to="/change-password" className="nav-link" onClick={() => setMenuOpen(false)}>Password</Link>
+              {user?.isAdmin && (
+                <Link to="/admin" className="nav-link" onClick={() => setMenuOpen(false)}>Admin</Link>
+              )}
               <span className="nav-user">{user?.username}</span>
               <button onClick={handleLogout} className="nav-btn">Logout</button>
             </>

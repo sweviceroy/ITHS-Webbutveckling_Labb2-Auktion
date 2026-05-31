@@ -1,0 +1,105 @@
+.admin-page {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+
+.admin-page h1 {
+  color: #eee;
+  margin-bottom: 1.5rem;
+}
+
+.admin-tabs {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.admin-tabs button {
+  padding: 0.5rem 1rem;
+  background: #16213e;
+  color: #888;
+  border: 1px solid #333;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.admin-tabs button.active {
+  background: #e94560;
+  color: white;
+  border-color: #e94560;
+}
+
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #16213e;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.admin-table th,
+.admin-table td {
+  padding: 0.7rem 1rem;
+  text-align: left;
+  border-bottom: 1px solid #1a1a2e;
+}
+
+.admin-table th {
+  background: #1a1a2e;
+  color: #888;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.admin-table td {
+  color: #eee;
+  font-size: 0.9rem;
+}
+
+.admin-table tr.inactive td {
+  color: #666;
+  text-decoration: line-through;
+}
+
+.deactivate-btn {
+  background: #3d0000;
+  color: #ff6b6b;
+  border: 1px solid #ff6b6b;
+  padding: 0.25rem 0.7rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.8rem;
+}
+
+.deactivate-btn:hover {
+  background: #ff6b6b;
+  color: white;
+}
+
+.activate-btn {
+  background: #0a3d0a;
+  color: #4caf50;
+  border: 1px solid #4caf50;
+  padding: 0.25rem 0.7rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.8rem;
+}
+
+.activate-btn:hover {
+  background: #4caf50;
+  color: white;
+}
+
+@media (max-width: 600px) {
+  .admin-table {
+    font-size: 0.8rem;
+  }
+
+  .admin-table th,
+  .admin-table td {
+    padding: 0.5rem 0.4rem;
+  }
+}
