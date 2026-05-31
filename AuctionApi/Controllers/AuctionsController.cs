@@ -98,6 +98,43 @@ public class AuctionsController : ControllerBase
         return Ok(MapDetailDto(auction));
     }
 
+    [HttpPut("{id}")]
+    [Authorize]
+    public async Task<ActionResult<AuctionDetailDto>> Update(Guid id, UpdateAuctionDto dto)
+    {
+        var auction = await _db.Auctions
+            .Include(a => a.Creator)
+            .Include(a => a.Bids)
+                .ThenInclude(b => b.Bidder)
+            .FirstOrDefaultAsync(a => a.Id == id);
+
+        if (auction == null)
+            return NotFound();
+
+        var userId = GetUserId();
+        if (auction.CreatorId != userId)
+            return Forbid();
+
+        if (!auction.IsActive || auction.EndDate <= DateTime.UtcNow)
+            return BadRequest(new { message = "Cannot update a closed auction" });
+
+        auction.Title = dto.Title;
+        auction.Description = dto.Description;
+        auction.ImageUrl = dto.ImageUrl;
+        auction.EndDate = dto.EndDate;
+
+        if (dto.StartingPrice.HasValue)
+        {
+            if (auction.Bids.Count > 0)
+                return BadRequest(new { message = "Cannot change starting price once bids have been placed" });
+            auction.StartingPrice = dto.StartingPrice.Value;
+        }
+
+        await _db.SaveChangesAsync();
+
+        return Ok(MapDetailDto(auction));
+    }
+
     private Guid GetUserId()
     {
         return Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);

@@ -23,6 +23,23 @@ public class CreateAuctionDto
     public DateTime EndDate { get; set; }
 }
 
+public class UpdateAuctionDto
+{
+    [Required, MaxLength(100)]
+    public string Title { get; set; } = string.Empty;
+
+    [MaxLength(500)]
+    public string Description { get; set; } = string.Empty;
+
+    [MaxLength(500)]
+    public string? ImageUrl { get; set; }
+
+    public decimal? StartingPrice { get; set; }
+
+    [Required]
+    public DateTime EndDate { get; set; }
+}
+
 public class AuctionListDto
 {
     public Guid Id { get; set; }

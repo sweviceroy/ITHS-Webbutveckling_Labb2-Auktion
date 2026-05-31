@@ -91,6 +91,39 @@ public class BidsController : ControllerBase
         return Ok(bids);
     }
 
+    [HttpDelete("latest")]
+    [Authorize]
+    public async Task<IActionResult> UndoLatestBid(Guid auctionId)
+    {
+        var auction = await _db.Auctions
+            .Include(a => a.Bids)
+            .FirstOrDefaultAsync(a => a.Id == auctionId);
+
+        if (auction == null)
+            return NotFound();
+
+        if (!auction.IsActive || auction.EndDate <= DateTime.UtcNow)
+            return BadRequest(new { message = "Auction is closed" });
+
+        var userId = GetUserId();
+        var latestBid = auction.Bids.OrderByDescending(b => b.BidTime).FirstOrDefault();
+
+        if (latestBid == null)
+            return BadRequest(new { message = "No bids to undo" });
+
+        if (latestBid.BidderId != userId)
+            return BadRequest(new { message = "You can only undo your own latest bid" });
+
+        _db.Bids.Remove(latestBid);
+        auction.CurrentHighestBid = auction.Bids
+            .Where(b => b.Id != latestBid.Id)
+            .MaxBy(b => (decimal?)b.Amount)?.Amount;
+
+        await _db.SaveChangesAsync();
+
+        return Ok(new { message = "Bid undone" });
+    }
+
     private Guid GetUserId()
     {
         return Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
