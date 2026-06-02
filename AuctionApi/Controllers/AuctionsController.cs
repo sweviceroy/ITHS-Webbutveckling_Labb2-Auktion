@@ -1,10 +1,9 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using AuctionApi.Data;
 using AuctionApi.DTOs;
 using AuctionApi.Models;
+using AuctionApi.Repositories;
 
 namespace AuctionApi.Controllers;
 
@@ -12,11 +11,11 @@ namespace AuctionApi.Controllers;
 [Route("api/[controller]")]
 public class AuctionsController : ControllerBase
 {
-    private readonly AuctionDbContext _db;
+    private readonly IAuctionRepository _auctions;
 
-    public AuctionsController(AuctionDbContext db)
+    public AuctionsController(IAuctionRepository auctions)
     {
-        _db = db;
+        _auctions = auctions;
     }
 
     [HttpPost]
@@ -42,55 +41,23 @@ public class AuctionsController : ControllerBase
             CreatorId = userId
         };
 
-        _db.Auctions.Add(auction);
-        await _db.SaveChangesAsync();
+        await _auctions.CreateAsync(auction);
+        var created = (await _auctions.GetByIdAsync(auction.Id))!;
 
-        await _db.Entry(auction).Reference(a => a.Creator).LoadAsync();
-
-        return CreatedAtAction(nameof(GetById), new { id = auction.Id }, MapDetailDto(auction));
+        return CreatedAtAction(nameof(GetById), new { id = auction.Id }, MapDetailDto(created));
     }
 
     [HttpGet]
     public async Task<ActionResult<List<AuctionListDto>>> GetAll([FromQuery] string? title, [FromQuery] bool includeClosed = false)
     {
-        var query = _db.Auctions
-            .Include(a => a.Creator)
-            .Include(a => a.Bids)
-            .Where(a => a.IsActive);
-
-        if (!includeClosed)
-            query = query.Where(a => a.EndDate > DateTime.UtcNow);
-
-        if (!string.IsNullOrWhiteSpace(title))
-            query = query.Where(a => a.Title.Contains(title));
-
-        var auctions = await query
-            .OrderByDescending(a => a.EndDate)
-            .Select(a => new AuctionListDto
-            {
-                Id = a.Id,
-                Title = a.Title,
-                ImageUrl = a.ImageUrl,
-                StartingPrice = a.StartingPrice,
-                CurrentHighestBid = a.CurrentHighestBid,
-                EndDate = a.EndDate,
-                IsOpen = a.EndDate > DateTime.UtcNow,
-                BidCount = a.Bids.Count,
-                CreatorUsername = a.Creator.Username
-            })
-            .ToListAsync();
-
+        var auctions = await _auctions.GetAllAsync(title, includeClosed);
         return Ok(auctions);
     }
 
     [HttpGet("{id}")]
     public async Task<ActionResult<AuctionDetailDto>> GetById(Guid id)
     {
-        var auction = await _db.Auctions
-            .Include(a => a.Creator)
-            .Include(a => a.Bids)
-                .ThenInclude(b => b.Bidder)
-            .FirstOrDefaultAsync(a => a.Id == id);
+        var auction = await _auctions.GetByIdWithBidsAsync(id);
 
         if (auction == null)
             return NotFound();
@@ -102,11 +69,7 @@ public class AuctionsController : ControllerBase
     [Authorize]
     public async Task<ActionResult<AuctionDetailDto>> Update(Guid id, UpdateAuctionDto dto)
     {
-        var auction = await _db.Auctions
-            .Include(a => a.Creator)
-            .Include(a => a.Bids)
-                .ThenInclude(b => b.Bidder)
-            .FirstOrDefaultAsync(a => a.Id == id);
+        var auction = await _auctions.GetByIdWithBidsAsync(id);
 
         if (auction == null)
             return NotFound();
@@ -130,7 +93,7 @@ public class AuctionsController : ControllerBase
             auction.StartingPrice = dto.StartingPrice.Value;
         }
 
-        await _db.SaveChangesAsync();
+        await _auctions.UpdateAsync(auction);
 
         return Ok(MapDetailDto(auction));
     }
@@ -152,14 +115,14 @@ public class AuctionsController : ControllerBase
         EndDate = a.EndDate,
         IsOpen = a.EndDate > DateTime.UtcNow && a.IsActive,
         CreatorId = a.CreatorId,
-        CreatorUsername = a.Creator.Username,
-        Bids = a.Bids.OrderByDescending(b => b.BidTime).Select(b => new BidDto
+        CreatorUsername = a.Creator?.Username ?? string.Empty,
+        Bids = a.Bids?.OrderByDescending(b => b.BidTime).Select(b => new BidDto
         {
             Id = b.Id,
             Amount = b.Amount,
             BidTime = b.BidTime,
-            BidderUsername = b.Bidder.Username,
+            BidderUsername = b.Bidder?.Username ?? string.Empty,
             BidderId = b.BidderId
-        }).ToList()
+        }).ToList() ?? new()
     };
 }

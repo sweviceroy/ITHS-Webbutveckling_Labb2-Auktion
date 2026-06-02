@@ -1,10 +1,9 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using AuctionApi.Data;
 using AuctionApi.DTOs;
 using AuctionApi.Models;
+using AuctionApi.Repositories;
 
 namespace AuctionApi.Controllers;
 
@@ -12,20 +11,22 @@ namespace AuctionApi.Controllers;
 [Route("api/auctions/{auctionId}/[controller]")]
 public class BidsController : ControllerBase
 {
-    private readonly AuctionDbContext _db;
+    private readonly IAuctionRepository _auctions;
+    private readonly IBidRepository _bids;
+    private readonly IUserRepository _users;
 
-    public BidsController(AuctionDbContext db)
+    public BidsController(IAuctionRepository auctions, IBidRepository bids, IUserRepository users)
     {
-        _db = db;
+        _auctions = auctions;
+        _bids = bids;
+        _users = users;
     }
 
     [HttpPost]
     [Authorize]
     public async Task<ActionResult<BidDto>> PlaceBid(Guid auctionId, CreateBidDto dto)
     {
-        var auction = await _db.Auctions
-            .Include(a => a.Bids)
-            .FirstOrDefaultAsync(a => a.Id == auctionId);
+        var auction = await _auctions.GetByIdAsync(auctionId);
 
         if (auction == null)
             return NotFound();
@@ -38,7 +39,8 @@ public class BidsController : ControllerBase
         if (auction.CreatorId == userId)
             return BadRequest(new { message = "You cannot bid on your own auction" });
 
-        var highestBid = auction.Bids.MaxBy(b => b.Amount);
+        var bids = await _bids.GetBidsByAuctionAsync(auctionId);
+        var highestBid = bids.MaxBy(b => b.Amount);
         var minimumBid = highestBid != null ? highestBid.Amount : auction.StartingPrice;
 
         if (dto.Amount <= minimumBid)
@@ -51,11 +53,11 @@ public class BidsController : ControllerBase
             BidderId = userId
         };
 
-        _db.Bids.Add(bid);
+        await _bids.CreateAsync(bid);
         auction.CurrentHighestBid = dto.Amount;
-        await _db.SaveChangesAsync();
+        await _auctions.UpdateAsync(auction);
 
-        var bidder = await _db.Users.FindAsync(userId);
+        var bidder = await _users.GetByIdAsync(userId);
 
         return Ok(new BidDto
         {
@@ -70,34 +72,23 @@ public class BidsController : ControllerBase
     [HttpGet]
     public async Task<ActionResult<List<BidDto>>> GetBids(Guid auctionId)
     {
-        var auctionExists = await _db.Auctions.AnyAsync(a => a.Id == auctionId);
-        if (!auctionExists)
-            return NotFound();
+        var bids = await _bids.GetBidsByAuctionAsync(auctionId);
 
-        var bids = await _db.Bids
-            .Include(b => b.Bidder)
-            .Where(b => b.AuctionId == auctionId)
-            .OrderByDescending(b => b.BidTime)
-            .Select(b => new BidDto
-            {
-                Id = b.Id,
-                Amount = b.Amount,
-                BidTime = b.BidTime,
-                BidderUsername = b.Bidder.Username,
-                BidderId = b.BidderId
-            })
-            .ToListAsync();
-
-        return Ok(bids);
+        return Ok(bids.Select(b => new BidDto
+        {
+            Id = b.Id,
+            Amount = b.Amount,
+            BidTime = b.BidTime,
+            BidderUsername = b.Bidder.Username,
+            BidderId = b.BidderId
+        }).ToList());
     }
 
     [HttpDelete("latest")]
     [Authorize]
     public async Task<IActionResult> UndoLatestBid(Guid auctionId)
     {
-        var auction = await _db.Auctions
-            .Include(a => a.Bids)
-            .FirstOrDefaultAsync(a => a.Id == auctionId);
+        var auction = await _auctions.GetByIdAsync(auctionId);
 
         if (auction == null)
             return NotFound();
@@ -106,7 +97,7 @@ public class BidsController : ControllerBase
             return BadRequest(new { message = "Auction is closed" });
 
         var userId = GetUserId();
-        var latestBid = auction.Bids.OrderByDescending(b => b.BidTime).FirstOrDefault();
+        var latestBid = await _bids.GetLatestBidAsync(auctionId);
 
         if (latestBid == null)
             return BadRequest(new { message = "No bids to undo" });
@@ -114,12 +105,13 @@ public class BidsController : ControllerBase
         if (latestBid.BidderId != userId)
             return BadRequest(new { message = "You can only undo your own latest bid" });
 
-        _db.Bids.Remove(latestBid);
-        auction.CurrentHighestBid = auction.Bids
+        await _bids.DeleteAsync(latestBid);
+
+        var remainingBids = await _bids.GetBidsByAuctionAsync(auctionId);
+        auction.CurrentHighestBid = remainingBids
             .Where(b => b.Id != latestBid.Id)
             .MaxBy(b => (decimal?)b.Amount)?.Amount;
-
-        await _db.SaveChangesAsync();
+        await _auctions.UpdateAsync(auction);
 
         return Ok(new { message = "Bid undone" });
     }
