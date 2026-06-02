@@ -12,7 +12,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  height: 56px;
+  height: 80px;
 }
 
 .navbar-brand {
@@ -22,15 +22,15 @@
 }
 
 .nav-logo {
-  height: 36px;
+  height: 64px;
   width: auto;
   display: block;
 }
 
 .nav-avatar {
-  height: 36px;
-  width: 36px;
-  border-radius: 50%;
+  height: 64px;
+  width: auto;
+  display: block;
   object-fit: cover;
   flex-shrink: 0;
 }
@@ -87,12 +87,11 @@
   }
 
   .nav-logo {
-    height: 28px;
+    height: 40px;
   }
 
   .nav-avatar {
-    height: 28px;
-    width: 28px;
+    height: 40px;
   }
 
   .nav-hamburger {
@@ -103,7 +102,7 @@
     display: none;
     flex-direction: column;
     position: absolute;
-    top: 56px;
+    top: 80px;
     left: 0;
     right: 0;
     background: #1a1a2e;
