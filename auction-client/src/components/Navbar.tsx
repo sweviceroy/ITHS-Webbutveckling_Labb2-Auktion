@@ -30,7 +30,7 @@ export default function Navbar() {
         <div className={`navbar-links ${menuOpen ? 'open' : ''}`}>
           {isAuthenticated ? (
             <>
-              <Link to="/auctions/create" className="nav-link" onClick={() => setMenuOpen(false)}>Sell</Link>
+              <Link to="/auctions/create" className="nav-link" onClick={() => setMenuOpen(false)}>Create Auction</Link>
               <Link to="/change-password" className="nav-link" onClick={() => setMenuOpen(false)}>Password</Link>
               {user?.isAdmin && (
                 <Link to="/admin" className="nav-link" onClick={() => setMenuOpen(false)}>Admin</Link>
