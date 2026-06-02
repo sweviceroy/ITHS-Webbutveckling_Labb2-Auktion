@@ -16,10 +16,23 @@
 }
 
 .navbar-brand {
-  color: #e94560;
-  font-size: 1.4rem;
-  font-weight: 700;
+  display: flex;
+  align-items: center;
   text-decoration: none;
+}
+
+.nav-logo {
+  height: 36px;
+  width: auto;
+  display: block;
+}
+
+.nav-avatar {
+  height: 36px;
+  width: 36px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
 }
 
 .navbar-links {
@@ -73,8 +86,13 @@
     padding: 0 1rem;
   }
 
-  .navbar-brand {
-    font-size: 1.1rem;
+  .nav-logo {
+    height: 28px;
+  }
+
+  .nav-avatar {
+    height: 28px;
+    width: 28px;
   }
 
   .nav-hamburger {

@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import Logo from '../assets/Logo.jpg';
+import Avatar from '../assets/sweviceroy.jpg';
 import './Navbar.css';
 
 export default function Navbar() {
@@ -18,7 +20,7 @@ export default function Navbar() {
     <nav className="navbar">
       <div className="navbar-inner">
         <Link to="/" className="navbar-brand">
-          AuctionHouse
+          <img src={Logo} alt="AuctionHouse" className="nav-logo" />
         </Link>
 
         <button className="nav-hamburger" onClick={() => setMenuOpen(!menuOpen)}>
@@ -43,6 +45,8 @@ export default function Navbar() {
             </>
           )}
         </div>
+
+        <img src={Avatar} alt="Profile" className="nav-avatar" />
       </div>
     </nav>
   );
