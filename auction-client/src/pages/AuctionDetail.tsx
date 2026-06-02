@@ -5,6 +5,10 @@ import { useAuth } from '../contexts/AuthContext';
 import type { AuctionDetail } from '../types';
 import './AuctionDetail.css';
 
+const pad = (n: number) => n.toString().padStart(2, '0');
+const toLocalDatetime = (d: Date) =>
+  `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+
 export default function AuctionDetailPage() {
   const { id } = useParams<{ id: string }>();
   const { user, isAuthenticated } = useAuth();
@@ -44,7 +48,7 @@ export default function AuctionDetailPage() {
     setEditTitle(auction.title);
     setEditDescription(auction.description);
     setEditImageUrl(auction.imageUrl || '');
-    setEditEndDate(new Date(auction.endDate).toISOString().slice(0, 16));
+    setEditEndDate(toLocalDatetime(new Date(auction.endDate)));
     setEditStartingPrice(auction.startingPrice.toString());
     setEditError('');
     setEditing(true);

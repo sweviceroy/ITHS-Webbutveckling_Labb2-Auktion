@@ -31,8 +31,11 @@ export default function CreateAuction() {
   };
 
   const now = new Date();
-  const defaultStart = now.toISOString().slice(0, 16);
-  const defaultEnd = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000).toISOString().slice(0, 16);
+  const pad = (n: number) => n.toString().padStart(2, '0');
+  const formatLocal = (d: Date) =>
+    `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+  const defaultStart = formatLocal(now);
+  const defaultEnd = formatLocal(new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000));
 
   return (
     <div className="create-auction-page">
