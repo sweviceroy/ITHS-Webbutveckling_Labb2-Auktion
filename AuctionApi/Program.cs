@@ -6,10 +6,14 @@ using Microsoft.IdentityModel.Tokens;
 using AuctionApi.Data;
 using AuctionApi.Services;
 using AuctionApi.Repositories;
+using AuctionApi.Utils;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddControllers();
+builder.Services.AddControllers().AddJsonOptions(options =>
+{
+    options.JsonSerializerOptions.Converters.Add(new UtcDateTimeConverter());
+});
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
