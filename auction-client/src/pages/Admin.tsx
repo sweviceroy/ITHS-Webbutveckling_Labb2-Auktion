@@ -4,8 +4,8 @@ import type { User, Auction } from '../types';
 import './Admin.css';
 
 export default function Admin() {
-  const [users, setUsers] = useState<(User & { isActive?: boolean })[]>([]);
-  const [auctions, setAuctions] = useState<(Auction & { isActive?: boolean })[]>([]);
+  const [users, setUsers] = useState<User[]>([]);
+  const [auctions, setAuctions] = useState<Auction[]>([]);
   const [tab, setTab] = useState<'users' | 'auctions'>('users');
   const [loading, setLoading] = useState(true);
 
@@ -24,16 +24,18 @@ export default function Admin() {
   }, []);
 
   const toggleUser = async (id: string) => {
-    await api.put(`/admin/users/${id}/deactivate`);
+    const res = await api.put(`/admin/users/${id}/deactivate`);
+    const activated = res.data.message === 'User activated';
     setUsers((prev) =>
-      prev.map((u) => (u.id === id ? { ...u, isActive: !u.isActive } : u))
+      prev.map((u) => (u.id === id ? { ...u, isActive: activated } : u))
     );
   };
 
   const toggleAuction = async (id: string) => {
-    await api.put(`/admin/auctions/${id}/deactivate`);
+    const res = await api.put(`/admin/auctions/${id}/deactivate`);
+    const activated = res.data.message === 'Auction activated';
     setAuctions((prev) =>
-      prev.map((a) => (a.id === id ? { ...a, isActive: !a.isActive } : a))
+      prev.map((a) => (a.id === id ? { ...a, isActive: activated } : a))
     );
   };
 
@@ -71,18 +73,18 @@ export default function Admin() {
           </thead>
           <tbody>
             {users.map((u) => (
-              <tr key={u.id} className={u.isActive === false ? 'inactive' : ''}>
+              <tr key={u.id} className={!u.isActive ? 'inactive' : ''}>
                 <td>{u.username}</td>
                 <td>{u.email}</td>
                 <td>{u.isAdmin ? 'Yes' : 'No'}</td>
-                <td>{u.isActive !== false ? 'Active' : 'Deactivated'}</td>
+                <td>{u.isActive ? 'Active' : 'Deactivated'}</td>
                 <td>
                   {!u.isAdmin && (
                     <button
                       onClick={() => toggleUser(u.id)}
-                      className={u.isActive !== false ? 'deactivate-btn' : 'activate-btn'}
+                      className={u.isActive ? 'deactivate-btn' : 'activate-btn'}
                     >
-                      {u.isActive !== false ? 'Deactivate' : 'Activate'}
+                      {u.isActive ? 'Deactivate' : 'Activate'}
                     </button>
                   )}
                 </td>
@@ -105,17 +107,17 @@ export default function Admin() {
           </thead>
           <tbody>
             {auctions.map((a) => (
-              <tr key={a.id} className={a.isActive === false ? 'inactive' : ''}>
+              <tr key={a.id} className={!a.isActive ? 'inactive' : ''}>
                 <td>{a.title}</td>
                 <td>{a.creatorUsername}</td>
                 <td>{a.currentHighestBid ?? a.startingPrice} SEK</td>
-                <td>{a.isActive !== false ? (a.isOpen ? 'Open' : 'Ended') : 'Hidden'}</td>
+                <td>{a.isActive ? (a.isOpen ? 'Open' : 'Ended') : 'Hidden'}</td>
                 <td>
                   <button
                     onClick={() => toggleAuction(a.id)}
-                    className={a.isActive !== false ? 'deactivate-btn' : 'activate-btn'}
+                    className={a.isActive ? 'deactivate-btn' : 'activate-btn'}
                   >
-                    {a.isActive !== false ? 'Hide' : 'Show'}
+                    {a.isActive ? 'Hide' : 'Show'}
                   </button>
                 </td>
               </tr>

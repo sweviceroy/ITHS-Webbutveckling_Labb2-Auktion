@@ -3,6 +3,7 @@ export interface User {
   username: string;
   email: string;
   isAdmin: boolean;
+  isActive: boolean;
   createdAt: string;
 }
 
@@ -14,6 +15,7 @@ export interface Auction {
   currentHighestBid?: number;
   endDate: string;
   isOpen: boolean;
+  isActive: boolean;
   bidCount: number;
   creatorUsername: string;
 }

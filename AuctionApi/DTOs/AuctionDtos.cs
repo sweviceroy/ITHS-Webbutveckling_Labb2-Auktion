@@ -49,6 +49,7 @@ public class AuctionListDto
     public decimal? CurrentHighestBid { get; set; }
     public DateTime EndDate { get; set; }
     public bool IsOpen { get; set; }
+    public bool IsActive { get; set; }
     public int BidCount { get; set; }
     public string CreatorUsername { get; set; } = string.Empty;
 }

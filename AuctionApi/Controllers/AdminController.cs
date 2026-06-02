@@ -30,6 +30,7 @@ public class AdminController : ControllerBase
             Username = u.Username,
             Email = u.Email,
             IsAdmin = u.IsAdmin,
+            IsActive = u.IsActive,
             CreatedAt = u.CreatedAt
         }).ToList());
     }

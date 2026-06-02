@@ -87,6 +87,7 @@ public class AuctionRepository : IAuctionRepository
                 CurrentHighestBid = a.CurrentHighestBid,
                 EndDate = a.EndDate,
                 IsOpen = a.EndDate > DateTime.UtcNow && a.IsActive,
+                IsActive = a.IsActive,
                 BidCount = a.Bids.Count,
                 CreatorUsername = a.Creator.Username
             })
