@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace AuctionApi.Models;
+namespace Auction.Domain.Entities;
 
 public class Auction
 {

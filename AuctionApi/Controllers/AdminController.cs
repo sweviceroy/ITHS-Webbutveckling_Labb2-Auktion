@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using AuctionApi.DTOs;
-using AuctionApi.Repositories;
+using Auction.Core.DTOs;
+using Auction.Core.Interfaces;
 
 namespace AuctionApi.Controllers;
 
@@ -10,60 +10,34 @@ namespace AuctionApi.Controllers;
 [Authorize(Roles = "Admin")]
 public class AdminController : ControllerBase
 {
-    private readonly IUserRepository _users;
-    private readonly IAuctionRepository _auctions;
+    private readonly IAdminService _admin;
 
-    public AdminController(IUserRepository users, IAuctionRepository auctions)
-    {
-        _users = users;
-        _auctions = auctions;
-    }
+    public AdminController(IAdminService admin) => _admin = admin;
 
     [HttpGet("users")]
     public async Task<ActionResult<List<UserDto>>> GetUsers()
     {
-        var users = await _users.GetAllAsync();
-
-        return Ok(users.Select(u => new UserDto
-        {
-            Id = u.Id,
-            Username = u.Username,
-            Email = u.Email,
-            IsAdmin = u.IsAdmin,
-            IsActive = u.IsActive,
-            CreatedAt = u.CreatedAt
-        }).ToList());
+        return Ok(await _admin.GetUsersAsync());
     }
 
     [HttpPut("users/{id}/deactivate")]
     public async Task<IActionResult> DeactivateUser(Guid id)
     {
-        var user = await _users.GetByIdAsync(id);
-        if (user == null) return NotFound();
-        if (user.IsAdmin) return BadRequest(new { message = "Cannot deactivate admin accounts" });
-
-        user.IsActive = !user.IsActive;
-        await _users.UpdateAsync(user);
-
-        return Ok(new { message = user.IsActive ? "User activated" : "User deactivated" });
+        try { return Ok(new { message = await _admin.ToggleUserActiveAsync(id) }); }
+        catch (KeyNotFoundException) { return NotFound(); }
+        catch (InvalidOperationException ex) { return BadRequest(new { message = ex.Message }); }
     }
 
     [HttpGet("auctions")]
     public async Task<ActionResult<List<AuctionListDto>>> GetAuctions()
     {
-        var auctions = await _auctions.GetAllForAdminAsync();
-        return Ok(auctions);
+        return Ok(await _admin.GetAuctionsAsync());
     }
 
     [HttpPut("auctions/{id}/deactivate")]
     public async Task<IActionResult> DeactivateAuction(Guid id)
     {
-        var auction = await _auctions.GetForAdminAsync(id);
-        if (auction == null) return NotFound();
-
-        auction.IsActive = !auction.IsActive;
-        await _auctions.UpdateAsync(auction);
-
-        return Ok(new { message = auction.IsActive ? "Auction activated" : "Auction deactivated" });
+        try { return Ok(new { message = await _admin.ToggleAuctionActiveAsync(id) }); }
+        catch (KeyNotFoundException) { return NotFound(); }
     }
 }

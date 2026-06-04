@@ -1,7 +1,7 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace AuctionApi.Utils;
+namespace Auction.Core.Utils;
 
 public class UtcDateTimeConverter : JsonConverter<DateTime>
 {

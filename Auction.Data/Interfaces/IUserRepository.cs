@@ -1,6 +1,6 @@
-using AuctionApi.Models;
+using Auction.Domain.Entities;
 
-namespace AuctionApi.Repositories;
+namespace Auction.Data.Interfaces;
 
 public interface IUserRepository
 {

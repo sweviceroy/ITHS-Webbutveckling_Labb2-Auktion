@@ -1,12 +1,13 @@
-
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using AuctionApi.Data;
-using AuctionApi.Services;
-using AuctionApi.Repositories;
-using AuctionApi.Utils;
+using Auction.Data;
+using Auction.Data.Interfaces;
+using Auction.Data.Repositories;
+using Auction.Core.Interfaces;
+using Auction.Core.Services;
+using Auction.Core.Utils;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -25,6 +26,11 @@ builder.Services.AddScoped<JwtService>();
 builder.Services.AddScoped<IAuctionRepository, AuctionRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IBidRepository, BidRepository>();
+
+builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IAuctionService, AuctionService>();
+builder.Services.AddScoped<IBidService, BidService>();
+builder.Services.AddScoped<IAdminService, AdminService>();
 
 var jwtKey = builder.Configuration["Jwt:Key"]!;
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)

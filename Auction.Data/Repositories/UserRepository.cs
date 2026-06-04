@@ -1,8 +1,9 @@
 using Microsoft.EntityFrameworkCore;
-using AuctionApi.Data;
-using AuctionApi.Models;
+using Auction.Data;
+using Auction.Domain.Entities;
+using Auction.Data.Interfaces;
 
-namespace AuctionApi.Repositories;
+namespace Auction.Data.Repositories;
 
 public class UserRepository : IUserRepository
 {

@@ -1,7 +1,6 @@
-using AuctionApi.Data;
-using AuctionApi.Models;
+using Auction.Domain.Entities;
 
-namespace AuctionApi.Data;
+namespace Auction.Data;
 
 public static class DbSeeder
 {
@@ -37,7 +36,7 @@ public static class DbSeeder
 
         db.Users.AddRange(admin, user1, user2);
 
-        var auction1 = new Auction
+        var auction1 = new AuctionEntity
         {
             Id = Guid.Parse("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"),
             Title = "Vintage Bicycle",
@@ -49,7 +48,7 @@ public static class DbSeeder
             CreatorId = user1.Id
         };
 
-        var auction2 = new Auction
+        var auction2 = new AuctionEntity
         {
             Id = Guid.Parse("bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb"),
             Title = "Antique Bookshelf",
@@ -61,7 +60,7 @@ public static class DbSeeder
             CreatorId = user1.Id
         };
 
-        var auction3 = new Auction
+        var auction3 = new AuctionEntity
         {
             Id = Guid.Parse("cccccccc-cccc-cccc-cccc-cccccccccccc"),
             Title = "Gaming Laptop",
@@ -73,7 +72,7 @@ public static class DbSeeder
             CreatorId = user2.Id
         };
 
-        var auction4 = new Auction
+        var auction4 = new AuctionEntity
         {
             Id = Guid.Parse("dddddddd-dddd-dddd-dddd-dddddddddddd"),
             Title = "Handmade Pottery Set",
@@ -85,7 +84,7 @@ public static class DbSeeder
             CreatorId = user2.Id
         };
 
-        var auction5 = new Auction
+        var auction5 = new AuctionEntity
         {
             Id = Guid.Parse("eeeeeeee-eeee-eeee-eeee-eeeeeeeeeeee"),
             Title = "Electric Guitar",

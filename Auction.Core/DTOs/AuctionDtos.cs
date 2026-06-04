@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace AuctionApi.DTOs;
+namespace Auction.Core.DTOs;
 
 public class CreateAuctionDto
 {

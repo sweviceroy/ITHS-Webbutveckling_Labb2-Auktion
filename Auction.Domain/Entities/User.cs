@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace AuctionApi.Models;
+namespace Auction.Domain.Entities;
 
 public class User
 {

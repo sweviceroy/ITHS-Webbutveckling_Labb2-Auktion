@@ -1,14 +1,14 @@
 using Microsoft.EntityFrameworkCore;
-using AuctionApi.Models;
+using Auction.Domain.Entities;
 
-namespace AuctionApi.Data;
+namespace Auction.Data;
 
 public class AuctionDbContext : DbContext
 {
     public AuctionDbContext(DbContextOptions<AuctionDbContext> options) : base(options) { }
 
     public DbSet<User> Users { get; set; }
-    public DbSet<Auction> Auctions { get; set; }
+    public DbSet<AuctionEntity> Auctions { get; set; }
     public DbSet<Bid> Bids { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -21,7 +21,7 @@ public class AuctionDbContext : DbContext
             .HasIndex(u => u.Email)
             .IsUnique();
 
-        modelBuilder.Entity<Auction>()
+        modelBuilder.Entity<AuctionEntity>()
             .HasOne(a => a.Creator)
             .WithMany(u => u.Auctions)
             .HasForeignKey(a => a.CreatorId)

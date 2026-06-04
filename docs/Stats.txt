@@ -1,0 +1,8 @@
+Metric	Count
+Total commits	24
+Days (first → last)	28 days (May 4 → June 2, 2026)
+Frontend files	25 (.tsx, .ts, .css + config files)
+Frontend lines	1,721
+Backend files	25 (.cs, .json, .csproj)
+Backend lines	1,031
+Combined codebase	50 files, 2,752 lines

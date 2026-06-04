@@ -1,0 +1,13 @@
+- Userpage där man kan se sina auctions och vilka bud och meddelande om man vunnit/förlorat, om någon är på väg att snart avslutas.
+
+- bugg med tiden (2 h fel)          [V]
+- bugg : auction kan skapas bakåt i tiden. 
+
+- Repository pattern istället       [V] 
+
+- Bud skall bara kunna ångras innan man stänger ner buddivven. Har man väll gått ut budet så skall det gälla
+
+- Terms and conditions sida.
+
+- Lägg till auth i Swagger. 
+
